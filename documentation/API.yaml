@@ -1,0 +1,178 @@
+swagger: "2.0"
+info:
+  description: "RESTful API to process data"
+  version: "0.1.0"
+  title: "Job Queue API"
+  termsOfService: ""
+  contact:
+    email: "omar@veriguide.org"
+externalDocs:
+    description: Git Repo
+    url: https://github.com/
+host: "192.168.1.29"
+basePath: "/v1"
+tags:
+- name: "YourApp"
+  description: "Handle input text and result"
+- name: "Queue"
+  description: "About the queue"
+schemes:
+  - "http"
+  - "https"
+
+paths:
+  /yourapp/:
+    get:
+      tags:
+      - "Queue"
+      responses:
+          200:
+            description: |
+              Valid Operation.
+
+  /yourapp/status:
+    get:
+      tags:
+      - "Queue"
+      summary: "View the status of jobs on the queue."
+      description: "Given a request containing the document ID. If document of the requested ID exists and is processed, result is array of [word,pos_tag] tuples, whitespace are included as separate words."
+      operationId: "getDoc"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: |
+          **id** should contain a document id that is currently in database.
+        required: true
+        schema:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+      responses:
+        200:
+          description: |
+            Valid Operation.
+            **success** indicates if the overall operation is successful.
+            **exist** indicates if the requested document exist in the database
+            **processed** indicates if the requested document, if it exist, have finished being processed. If **exist** is true, but **processed** is false, a request can be resent later to retrieve the processed result. 
+            if the overall operation is successful, **result** will contain the document as an array of token tagged with POS.
+            The result array contain a array for each token (whitespace is also treated as its own token). For each token, the first element is a string containing the literal text of the token. The second element is a string containing the tag of the token. 
+            For list of POS tags and their meaning, reference **"application/static/tagtable.js"**
+          schema:
+            type: "object"
+            properties:
+              success:
+                type: "boolean"
+              exist:
+                type: "boolean"
+              processed:
+                type: "boolean"
+              result:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    text:
+                      type: "string"
+                    tag:
+                      type: "string"
+
+            example:
+              success: true
+              exist: true
+              processed: true
+              result: [{text: "I", tag: "PRON"}, {text: " ", tag: "ESC"}, {text: "go", tag: "VERB"}]
+        500:
+          description: "Server Error"
+
+  /yourapp/new:
+    post:
+      tags:
+      - "YourApp"
+      summary: "Add a new job to the queue"
+      description: "Given a text, add it to the queue, then process the text."
+      operationId: "newDoc"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: |
+          **text** should contain the text that you wish to submit
+        required: true
+        schema:
+          type: "object"
+          properties:
+            textline:
+              type: "string"
+          example:
+            textline: "I go to school by bus."
+      responses:
+        200:
+          description: |
+            Valid Operation.
+            **success** indicates indicate if the submission is successful.
+            if the submission is successful, **id** contain a document id that can be used to retireve the processed document.
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+              msg:
+                type: "string"
+              hash:
+                type: "string"
+              id:
+                type: "string"
+              task_id:
+                type: "string"
+        500:
+          description: "Server Error"
+
+  /yourapp/get:
+    post:
+      tags:
+      - "YourApp"
+      summary: "retrive result from the database"
+      description: "Test function to specificaly process a exisiting text entry in the database"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "id"
+        description: |
+          **id** should contain the id of an existing document in database
+        required: true
+        schema:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+      responses:
+        200:
+          description: |
+            Valid operation
+            **success** indicate if the processing is successful.
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+              exist:
+                type: "boolean"
+              success:
+                type: "boolean"
+              processed_text:
+                type: "string"
+              body:
+                type: "string"
+        500:
+          description: "Server Error"

@@ -1,0 +1,80 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis
+    expose:
+      - 6379
+
+  mongodb:
+    image: mongo:3.6.14
+    restart: always
+    expose:
+      - 27017
+
+  mysql:
+    image: mysql:8.0.19
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: yourapp
+      MYSQL_ROOT_PASSWORD: yourapp_password
+    volumes:
+      - ./application/resources/database/schema_mysql.sql:/docker-entrypoint-initdb.d/schema_mysql.sql
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
+      - 33060:33060
+    
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    
+  yourapp:
+    restart: always
+    image: yourapp
+    build: .
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./instance:/home/flask/app/instance
+      - ./output_files:/home/flask/app/output_files
+
+      - ./application/document_stats.py:/home/flask/app/application/document_stats.py
+      - ./application/templates/index.html:/home/flask/app/application/templates/index.html
+    command: /usr/local/bin/gunicorn -w 1 -b :8001 application:app
+    links:
+      - redis
+    depends_on:
+      - redis
+
+  yourapp-worker:
+    restart: always
+    image: yourapp
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./instance:/home/flask/app/instance
+      - ./output_files:/home/flask/app/output_files
+
+      - ./application/yourapp.py:/home/flask/app/application/yourapp.py
+      - ./yourapp/main.py:/home/flask/app/yourapp/main.py
+
+      # - ./log:/tmp
+    environment:
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8 
+      - FLASK_APP=application
+      - WORKER_COUNT=3
+    command: /usr/local/bin/supervisord -n -c /home/flask/app/supervisord.conf
+    links:
+      - redis
+    depends_on:
+      - redis

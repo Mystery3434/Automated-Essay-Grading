@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Minimal App</title>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+<link rel="stylesheet" href="static/style.css">
+</head>
+
+<body >
+<div class="container-fluid", style="background-color:rebeccapurple;">
+    <div class="container text-centre", style=" padding:10px">
+        <div class="row">
+            <div class="col-10">
+                <h3 class="display-4 white-header">Minimal App</h3>
+                <p></p>
+            </div>
+            <div class="col-2 text-right">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" id="mainComponent" style="background-color:white;">
+    <div class="container" style=" padding:10px;">
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <div class="large-12 medium-12 small-12 cell">
+                        <p> Type some text:<br>
+                            <textarea type="text" name="textline" size="30"></textarea>
+                        </p>
+                        <div>
+                            <button type="button" v-on:click="submitFile">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-6">
+                <textarea class="input-area form-control rounded-0" style="height:65vh" placeholder="Output" id="inputTextArea" v-model="outText">{{'{{text}}'}}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+mainComponent = new Vue({
+  el: '#mainComponent',
+  data:{
+      text:"Please put your text here",
+      textID: null,
+      loading : false,
+      processed_text:[],
+      outText: "",
+  },
+  methods: {
+    fetchResult() {
+        let vm = this;
+        timeOutPeriod = 50;
+        tryToGetText = function () {
+            axios.post("/yourapp/get", {
+                id: vm.textID
+            })
+            .then(response => {
+                if(!response.data.exist){
+                    vm.loading = false;
+                    alert("document does not exist")
+                }
+                else if (response.data.success){
+                    vm.loading = false;
+                    let body = response.data.processed_text
+                    console.log(body)
+                    vm.outText = body
+                }
+                else{
+                    console.log("document not ready")
+                    setTimeout(tryToGetText, timeOutPeriod);
+                    if(timeOutPeriod <= 5000)
+                        timeOutPeriod = timeOutPeriod * 2
+                }
+            })
+            .catch(err => {
+                alert(err)
+            })
+        }
+        tryToGetText()
+    },
+    submitFile(event) {
+        event.preventDefault();
+        let vm = this;
+
+        let formData = new FormData();
+        formData.append('textline', document.querySelector('textarea[name="textline"').value);
+
+        axios.post( '/yourapp/new', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(function(response) {
+            console.log('SUCCESS!');
+            vm.textID = response.data.id
+            console.log(response.data.id)
+            vm.fetchResult()
+        })
+        .catch(function(err) {
+            console.log('FAILURE!', err);
+        });
+    }
+  },
+
+})
+</script>
+
+
+</body>
