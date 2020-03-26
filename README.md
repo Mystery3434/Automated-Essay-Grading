@@ -1,3 +1,35 @@
+# Fyp
+
+## 1. Convert PDF/docx
+Download [tika-server.jar (1.24)](https://tika.apache.org/download.html), **rename** to `tika-server.jar` and  put to the root folder, i.e. folder this README locates.
+
+## 2. Docker Compose
+
+Up
+
+```
+docker-compose up --build
+```
+
+`--build` is used when new build is need.
+
+Down
+
+```
+docker-compose down -v
+```
+
+`-v` is to remove the Frontend client(Angular) build. Use when changes of the client.
+
+## 3. Frontend client
+```
+cd <root>/application/
+```
+
+Clone repo from [veriguide_dashboard_client](https://github.com/KEEP-EDU-HK/veriguide_dashboard_client). Switch to `feature/fyp` branch
+
+<hr>
+
 ## Setup
   
 

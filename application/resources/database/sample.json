@@ -1,0 +1,53 @@
+{
+    "submission_id": 10000001,
+    "submission_timestamp": 1576173294,
+    "job_timestamp": 1576209240,
+    "wordfrequency_all": 1,
+    "wordfrequency_content": 7,
+    "wordfrequency_function": 9,
+    "wordrangescore": 42,
+    "academicwordscore": 0.7777777777777778,
+    "academic_sublists_score": 0.7777777777777778,
+    "familiarityscore": 0.7777777777777778,
+    "concretenessscore": 0.7777777777777778,
+    "imagabilityscore": 0.7777777777777778,
+    "meaningfulnesscscore": 0.7777777777777778,
+    "meaningfulnesspscore": 0.7777777777777778,
+    "ageofacquisitionscore": 0.7777777777777778,
+    "grammar_errorrate": 0.7777777777777778,
+    "flesch_reading_ease": 0.7777777777777778,
+    "flesch_kincaid_grade_level": 0.7777777777777778,
+    "smog": 0.7777777777777778,
+    "coleman_liau": 0.7777777777777778,
+    "ari": 0.7777777777777778,
+    "semanticoverlap": 0.7777777777777778,
+    "typetokenratio": 0.7777777777777778,
+    "holistic_score": 0.7777777777777778,
+    "widget_layout": [
+        [{
+                "class_name": "col-md-4",
+                "widget_type": "widget-figures",
+                "heading": "WIDGET.Length",
+                "field_names": ["length_by_sentence", "length_by_distict_token", "length_by_word", "length_by_character"]
+            },
+            {
+                "class_name": "col-md-4",
+                "widget_type": "widget-progress",
+                "heading": "WIDGET.Percentage",
+                "field_names": ["lexical_diversity"]
+            }
+        ],
+        [{
+            "class_name": "col-sm-12",
+            "widget_type": "widget-datatable",
+            "heading": "WIDGET.Datatable",
+            "field_names": ["data_split_by_sentence"]
+        }],
+        [{
+            "class_name": "col-sm-12",
+            "widget_type": "widget-wordcloud",
+            "heading": "WIDGET.WordCloud",
+            "field_names": ["data_fdist"]
+        }]
+    ]
+}

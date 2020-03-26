@@ -6,12 +6,6 @@ services:
     expose:
       - 6379
 
-  mongodb:
-    image: mongo:3.6.14
-    restart: always
-    expose:
-      - 27017
-
   mysql:
     image: mysql:8.0.19
     restart: always
@@ -47,8 +41,8 @@ services:
       - ./instance:/home/flask/app/instance
       - ./output_files:/home/flask/app/output_files
 
-      - ./application/document_stats.py:/home/flask/app/application/document_stats.py
-      - ./application/templates/index.html:/home/flask/app/application/templates/index.html
+      - ./application:/home/flask/app/application
+      - web_dist:/home/flask/app/application/veriguide_dashboard_client/build
     command: /usr/local/bin/gunicorn -w 1 -b :8001 application:app
     links:
       - redis
@@ -64,10 +58,10 @@ services:
       - ./instance:/home/flask/app/instance
       - ./output_files:/home/flask/app/output_files
 
-      - ./application/yourapp.py:/home/flask/app/application/yourapp.py
-      - ./yourapp/main.py:/home/flask/app/yourapp/main.py
+      - ./application:/home/flask/app/application
 
-      # - ./log:/tmp
+      - ./log:/tmp
+      - ./tika-server.jar:/tmp/tika-server.jar
     environment:
       - LC_ALL=C.UTF-8
       - LANG=C.UTF-8 
@@ -78,3 +72,16 @@ services:
       - redis
     depends_on:
       - redis
+
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - '80:80'
+    volumes:
+      - web_dist:/www
+    depends_on:
+      - yourapp
+
+volumes:
+  web_dist:

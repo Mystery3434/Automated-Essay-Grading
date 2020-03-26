@@ -19,7 +19,7 @@ def create_app(test_config=None):
         REDIS_HOST = 'redis',
         REDIS_PORT = 6379,
         REDIS_DB = '0',
-        QUEUES = ['default'],
+        QUEUES = ['process', 'conversion'],
     )
 
     if test_config is None:
@@ -48,6 +48,9 @@ def create_app(test_config=None):
     #register blueprints
     from application.yourapp import yourapp
     app.register_blueprint(yourapp, url_prefix='/yourapp')
+
+    from application.documents import documents
+    app.register_blueprint(documents, url_prefix='/documents')
 
 
     # handle the main page

@@ -1,5 +1,5 @@
 REDIS_URL = 'redis://redis:6379/'
-QUEUES = ['process']
+QUEUES = ['process', 'conversion']
 MONGODB_HOST = 'mongodb'
 MYSQL_DATABASE_USER = 'root'
 MYSQL_DATABASE_PASSWORD = 'yourapp_password'

@@ -1,0 +1,6 @@
+*/node_modules*
+/application/veriguide_dashboard_client/node_modules
+node_modules
+npm-debug.log
+.git
+.gitignore

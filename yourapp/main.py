@@ -10,12 +10,14 @@ def process_text(body):
     # time.sleep(30)
     return "This is the result by yourapp with: {}".format(body)
 
-def main(uid="", body=""):
+def main(id="", uuid="", body=""):
     processed_body = process_text(body)
     ajson = {
-        "uid": uid,
-        "body": body,
-        "processed_body": processed_body
+        "id": id,
+        "uuid": uuid,
+        # "body": body,
+        # "processed_body": processed_body,
+        "val": 0.01,
     }
     return ajson
 
