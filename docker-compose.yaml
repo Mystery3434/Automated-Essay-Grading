@@ -60,7 +60,7 @@ services:
 
       - ./application:/home/flask/app/application
 
-      - ./log:/tmp
+      #- ./log:/tmp
       - ./tika-server.jar:/tmp/tika-server.jar
     environment:
       - LC_ALL=C.UTF-8
@@ -77,7 +77,7 @@ services:
     restart: always
     build: ./nginx
     ports:
-      - '80:80'
+      - '4202:80'
     volumes:
       - web_dist:/www
     depends_on:
