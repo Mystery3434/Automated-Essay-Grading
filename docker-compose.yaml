@@ -42,6 +42,7 @@ services:
       - ./output_files:/home/flask/app/output_files
 
       - ./application:/home/flask/app/application
+      - ./yourapp:/home/flask/app/yourapp
       - web_dist:/home/flask/app/application/veriguide_dashboard_client/build
     command: /usr/local/bin/gunicorn -w 1 -b :8001 application:app
     links:
@@ -59,6 +60,7 @@ services:
       - ./output_files:/home/flask/app/output_files
 
       - ./application:/home/flask/app/application
+      - ./yourapp:/home/flask/app/yourapp
 
       #- ./log:/tmp
       - ./tika-server.jar:/tmp/tika-server.jar
