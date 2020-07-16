@@ -1,0 +1,5 @@
+test in main: 3===>OK 1
+
+test in main: {"id": "3", "uuid": "51ecf623b52c3cd85902de79391789a5", "val": 0.01}===>OK 3
+
+test in main: ===>OK Finally

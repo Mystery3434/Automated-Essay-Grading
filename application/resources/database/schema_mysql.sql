@@ -59,6 +59,10 @@ CREATE TABLE `tbl_submit_document_stat` (
   `semanticoverlap` float unsigned NOT NULL,
   `typetokenratio` float unsigned NOT NULL,
   `holistic_score` float unsigned NOT NULL,
+  `fact_status` TEXT,
+  `fact_count` bigint(20) unsigned,
+  `accuracy_score` float unsigned NOT NULL,
+  `feedback_text` TEXT,
 
   PRIMARY KEY (`uuid`),
   UNIQUE KEY `UNIQUE_ID` (`uuid`)
@@ -78,7 +82,9 @@ CREATE TABLE document (
   process_status CHAR(20) NOT NULL DEFAULT "NOT PROCESSED",
   title TEXT,
   body TEXT NOT NULL,
-  processed_body TEXT
+  processed_body TEXT,
+facts TEXT,
+prompt TEXT
 );
 
 DROP TABLE IF EXISTS user_tasks;

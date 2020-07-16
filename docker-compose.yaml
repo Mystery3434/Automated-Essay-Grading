@@ -1,4 +1,4 @@
-version: '3.4'
+version: '2.3'
 
 services:
   redis:
@@ -42,8 +42,12 @@ services:
       - ./output_files:/home/flask/app/output_files
 
       - ./application:/home/flask/app/application
+      - ./yourapp:/home/flask/app/yourapp
       - web_dist:/home/flask/app/application/veriguide_dashboard_client/build
-    command: /usr/local/bin/gunicorn -w 1 -b :8001 application:app
+      - /usr/local/cuda-10.0:/usr/local/cuda-10.0
+      - /home/omar/sent:/home/flask/app/yourapp/sent
+    runtime: nvidia
+    command: /usr/local/bin/gunicorn -w 1 --timeout 600  -b :8001 application:app
     links:
       - redis
     depends_on:
@@ -59,14 +63,18 @@ services:
       - ./output_files:/home/flask/app/output_files
 
       - ./application:/home/flask/app/application
+      - ./yourapp:/home/flask/app/yourapp
 
       #- ./log:/tmp
       - ./tika-server.jar:/tmp/tika-server.jar
+      - /home/omar/sent:/home/flask/app/yourapp/sent
+    runtime: nvidia
     environment:
       - LC_ALL=C.UTF-8
       - LANG=C.UTF-8 
       - FLASK_APP=application
       - WORKER_COUNT=3
+      - NVIDIA_VISIBLE_DEVICES=all
     command: /usr/local/bin/supervisord -n -c /home/flask/app/supervisord.conf
     links:
       - redis
@@ -80,6 +88,7 @@ services:
       - '4202:80'
     volumes:
       - web_dist:/www
+      - ./css:/www/index/assets-vg/css
     depends_on:
       - yourapp
 

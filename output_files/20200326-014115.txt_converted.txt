@@ -1,0 +1,112 @@
+
+
+1 
+
+以 Android 連接 CUHK VPN 服務 
+(此用戶指南適用於 Android 7.0 用戶，如你正使用其他版本，有關界面或略有不同。) 目錄 A. 開始使用 ............................................................................................................................. 1 B. 建立 VPN 檔案 ................................................................................................................... 2 C. 連接 CUHK VPN ............................................................................................................... 3 D. 中斷連接 CUHK VPN ....................................................................................................... 5 
+
+如有疑問，請向資訊科技服務處查詢 • 熱綫：3943 8845 （辦公時間） • 網上服務台：http://servicedesk.itsc.cuhk.edu.hk  
+
+A. 開始使用 每次連線時間上限： ⚫ 連續使用 8 小時後將自動斷開連線，屆時你可重新連線。 須知： ⚫ 受中國國家防火墻影響，中國境內或無法使用穩定的 VPN 服務。 
+
+
+
+
+
+
+
+http://servicedesk.itsc.cuhk.edu.hk/
+ 2 
+
+B. 建立 VPN 檔案 1. 開啓 設定 > 更多  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+> VPN > 新增 VPN。 
+
+2. 輸入以下資料 ⚫ 名稱：CUHK VPN ⚫ 類型：L2TP/IPSec PSK ⚫ 伺服器位址：vpn.cuhk.edu.hk ⚫ L2TP 密碼：未使用（可省） ⚫ IPSce 識別碼：未使用（可省） ⚫ IPSec 預先共用金鑰：ipsec-vpn 儲存。 CUHK VPN 設定完畢。 
+
+
+
+
+
+3 
+
+C. 連接 CUHK VPN 1. 開啓 設定 > 更多  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+> VPN > 新增 VPN。 
+
+2. 以電腦賬號登入 • your *Computing ID • OnePass Password *Computing ID: 學生：s1155xxxxxx 職員：bxxxxxx 點選 連接 建立連線。  • 已登記 DUO 雙重認證 (2FA)的學生及職員，請依照以下方式 3A，3B 或 3C（任選其一）輸入密碼。 • 如你未曾登記 DUO 雙重認證 (2FA)，你即成功連接 CUHK VPN https://www.itsc.cuhk.edu.hk/all-it/information-security/two-factor-authentication-2fa/
+ 4 
+
+3A.  password (DUO Mobile App – Push) 點選 Login request 或 開啟 DUO Mobile App 後，點選提示信息，手機將顯示登入請求。 
+
+點選 Approve，即成功連接 CHUK VPN。 
+
+提示：請確保手機網絡狀態良好，否則DUO Push 或無法使用。 
+
+或 
+
+
+
+
+
+3B.  password,passcode (DUO Mobile App – Generate Codes) 你可從 DUO Mobile App 獲取 DUO 密碼。開啟 DUO Mobile App 後，點選鑰匙圖標獲取一次性密碼。 
+
+以電腦賬號登入 • *Computing ID • OnePass Password,767809 *Computing ID: 學生：s1155xxxxxx 職員：bxxxxxx 點選 連接 建立連線。 
+
+
+
+
+
+
+
+
+
+5 
+
+3C.   password,bypasscode (Use a temporary DUO Bypass Code) 如你因手機（忘記攜帶、維修、遺失或被盜）而無法通過雙重認證，可透過https://duo.itsc.cuhk.edu.hk 獲取 DUO Bypass Code 
+
+以電腦賬號登入 • your *Computing ID • CUHK OnePass,273635110 *Computing ID: 學生：s1155xxxxxx 職員：bxxxxxx 點選 好 建立連線。 
+
+
+
+
+
+
+
+ 
+ D. 中斷連接 CUHK VPN 1. 點選已連接的 CUHK VPN 檔案 > 中斷連線   
+ 編寫: 資訊科技服務處用戶支援小組 上次更新: 2020 年 1 月 3 日 香港中文大學 資訊科技服務處版權所有 © 2020 https://duo.itsc.cuhk.edu.hk/
+http://www.cuhk.edu.hk/chinese/index.html
+http://www.cuhk.edu.hk/itsc/chinese/index-en.html

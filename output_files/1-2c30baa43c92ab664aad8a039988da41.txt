@@ -1,0 +1,7 @@
+test in main: 1===>OK 1
+
+test in main: {"id": "1", "uuid": "2c30baa43c92ab664aad8a039988da41", "body": "This is a harcoded essay text as a placeholder.", "processed_body": {"length_by_sentence": 1, "length_by_distinct_token": 1, "length_by_word": 1, "length_by_character": 1, "lexical_diversity": 9.5, "data_by_sentence": "{}", "data_by_fdist": "{}", "wordfrequency_all": 0.541, "wordfrequency_content": 0.912, "wordfrequency_function": 0.173, "wordrangescore": 0.614, "academicwordscore": 0.215, "academic_sublists_score": 0.871, "familiarityscore": 0.992, "concretenessscore": 0.123, "imagabilityscore": 0.224, "meaningfulnesscscore": 0.746, "meaningfulnesspscore": 0.43, "ageofacquisitionscore": 0.345, "grammar_errorrate": 0.765, "flesch_reading_ease": 0.636, "flesch_kincaid_grade_level": 0.876, "smog": 0.146, "coleman_liau": 0.865, "ari": 0.688, "semanticoverlap": 0.69, "typetokenratio": 0.42, "holistic_score": 0.696}, "val": 0.01}===>OK 3
+
+test in main: 'length_by_sentence'===>Error DB
+
+test in main: ===>OK Finally

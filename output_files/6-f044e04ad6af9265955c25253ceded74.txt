@@ -1,0 +1,7 @@
+test in main: 6===>OK 1Error in main: Model name './Set1to7Sigmoid' was not found in tokenizers model name list (bert-base-uncased, bert-large-uncased, bert-base-cased, bert-large-cased, bert-base-multilingual-uncased, bert-base-multilingual-cased, bert-base-chinese, bert-base-german-cased, bert-large-uncased-whole-word-masking, bert-large-cased-whole-word-masking, bert-large-uncased-whole-word-masking-finetuned-squad, bert-large-cased-whole-word-masking-finetuned-squad, bert-base-cased-finetuned-mrpc, bert-base-german-dbmdz-cased, bert-base-german-dbmdz-uncased). We assumed './Set1to7Sigmoid' was a path or url to a directory containing vocabulary files named ['vocab.txt'] but couldn't find such vocabulary files at this path or url.
+
+test in main: {}===>OK 3
+
+test in main: 'processed_body'===>Error DB
+
+test in main: ===>OK Finally

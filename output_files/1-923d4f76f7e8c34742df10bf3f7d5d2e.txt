@@ -1,0 +1,7 @@
+test in main: 1===>OK 1Error in main: local variable 'processed_body' referenced before assignment
+
+test in main: {}===>OK 3
+
+test in main: 'processed_body'===>Error DB
+
+test in main: ===>OK Finally

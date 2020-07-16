@@ -3,6 +3,7 @@ from application.database import get_db
 from flask import Blueprint, request, current_app, jsonify, json, g, make_response
 from flask_cors import CORS, cross_origin
 
+import ast
 import os
 import redis
 from rq import Queue, Connection
@@ -24,7 +25,7 @@ def genHash(content):
     m.update(content.encode('utf-8'))
     return m.hexdigest()
 
-def queue_convert_doc(res, processedContent, submission_id, hashId, user_id, filename="", filepath=""):
+def queue_convert_doc(res, processedContent, submission_id, hashId, user_id, filename="", filepath="", prompt ="", facts=""):
     cursor = None
     cur = None
     job_id = ""
@@ -47,10 +48,10 @@ def queue_convert_doc(res, processedContent, submission_id, hashId, user_id, fil
             cursor = conn.cursor()
             if filename == "" and filepath == "":
                 # Text
-                cursor.execute("INSERT INTO document (body, submission_id, uuid) VALUES (%s, %s, %s);", (processedContent, submission_id, hashId))
+                cursor.execute("INSERT INTO document (body, submission_id, uuid, prompt, facts) VALUES (%s, %s, %s, %s, %s);", (processedContent, submission_id, hashId, prompt, facts))
             else:
                 # File
-                cursor.execute("INSERT INTO document (body, submission_id, uuid, filename, filepath) VALUES (%s, %s, %s, %s, %s);", ("", submission_id, hashId, filename, filepath))
+                cursor.execute("INSERT INTO document (body, submission_id, uuid, filename, filepath, prompt, facts) VALUES (%s, %s, %s, %s, %s, %s, %s);", ("", submission_id, hashId, filename, filepath, prompt, facts))
             # Submission by User
             cursor.execute("INSERT INTO user_tasks (user_id, submission_id, uuid) VALUES (%s, %s, %s);", (user_id, submission_id, hashId))
             conn.commit()
@@ -185,9 +186,15 @@ def process_analysis(id, uuid, submission_id=""):
             db = get_db()
             conn = db.connect()
             cursor = conn.cursor()
-            cursor.execute("SELECT process_status, processed_body, submission_id FROM document WHERE uuid = %s;", (uuid))
+            cursor.execute("SELECT process_status, processed_body, submission_id, prompt, facts FROM document WHERE uuid = %s;", (uuid))
             result = cursor.fetchall()
             body = result[0][1]
+            prompt = result[0][3]
+            facts_string = result[0][4]
+            facts_list = ast.literal_eval(facts_string)
+            facts = [entry["value"] for entry in facts_list]
+
+            success = False
 
             if True or len(body) > 0:
 
@@ -200,7 +207,7 @@ def process_analysis(id, uuid, submission_id=""):
                     cursor.execute("UPDATE user_tasks SET process_status = 'PROCESSING' WHERE uuid = %s;", (uuid))
                     conn.commit()
 
-                    result = ""
+                    result = {}
                     # Import yourapp
                     from yourapp.main import main
                     try:
@@ -208,6 +215,8 @@ def process_analysis(id, uuid, submission_id=""):
                             id=id,
                             uuid=uuid,
                             body=body,
+                            prompt = prompt,
+                            facts = facts
                         )
                     except Exception as e:
                         with open("/home/flask/app/output_files/{}-{}.txt".format(id, uuid), mode="a", encoding="utf8") as f:
@@ -221,35 +230,39 @@ def process_analysis(id, uuid, submission_id=""):
                         cursor.execute("UPDATE document SET process_status = 'FINISHED', processed_body = %s WHERE uuid = %s;", (json.dumps(result), uuid))
                         cursor.execute("UPDATE user_tasks SET process_status = 'FINISHED' WHERE uuid = %s;", (uuid))
                         process_status = "FINISHED"
-                        length_by_sentence = 1
-                        length_by_distinct_token = 1
-                        length_by_word = 1
-                        length_by_character = 1
-                        lexical_diversity = 0.5
-                        data_by_sentence = "{}"
-                        data_by_fdist = "{}"
-                        wordfrequency_all = 0.111
-                        wordfrequency_content = 0.112
-                        wordfrequency_function = 0.113
-                        wordrangescore = 0.114
-                        academicwordscore = 0.115
-                        academic_sublists_score = 0.121
-                        familiarityscore = 0.122
-                        concretenessscore = 0.123
-                        imagabilityscore = 0.124
-                        meaningfulnesscscore = 0.125
-                        meaningfulnesspscore = 0.131
-                        ageofacquisitionscore = 0.132
-                        grammar_errorrate = 0.133
-                        flesch_reading_ease = 0.134
-                        flesch_kincaid_grade_level = 0.135
-                        smog = 0.141
-                        coleman_liau = 0.142
-                        ari = 0.143
-                        semanticoverlap = 0.144
-                        typetokenratio = 0.145
-                        holistic_score = 0.151
-                        cursor.execute("INSERT INTO tbl_submit_document_stat (submission_id, uuid, process_status, length_by_sentence, length_by_distinct_token, length_by_word, length_by_character, lexical_diversity, data_by_sentence, data_by_fdist, wordfrequency_all, wordfrequency_content, wordfrequency_function, wordrangescore, academicwordscore, academic_sublists_score, familiarityscore, concretenessscore, imagabilityscore, meaningfulnesscscore, meaningfulnesspscore, ageofacquisitionscore, grammar_errorrate, flesch_reading_ease, flesch_kincaid_grade_level, smog, coleman_liau, ari, semanticoverlap, typetokenratio, holistic_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", (
+                        length_by_sentence = 0 # result["processed_body"]["length_by_sentence"]
+                        length_by_distinct_token = 0 # result["processed_body"]["length_by_distinct_token"]
+                        length_by_word = 0 # result["processed_body"]["length_by_word"]
+                        length_by_character = 0 # result["processed_body"]["length_by_character"]
+                        lexical_diversity = 0 # result["processed_body"]["lexical_diversity"]
+                        data_by_sentence = '{}' # result["processed_body"]["data_by_sentence"]
+                        data_by_fdist = '{}' # result["processed_body"]["data_by_fdist"]
+                        wordfrequency_all = result["processed_body"]["wordfrequency_all"]
+                        wordfrequency_content = result["processed_body"]["wordfrequency_content"]
+                        wordfrequency_function = result["processed_body"]["wordfrequency_function"]
+                        wordrangescore = result["processed_body"]["wordrangescore"]
+                        academicwordscore = result["processed_body"]["academicwordscore"]
+                        academic_sublists_score = 0 # result["processed_body"]["academic_sublists_score"]
+                        familiarityscore = result["processed_body"]["familiarityscore"]
+                        concretenessscore = result["processed_body"]["concretenessscore"]
+                        imagabilityscore = result["processed_body"]["imagabilityscore"]
+                        meaningfulnesscscore = result["processed_body"]["meaningfulnesscscore"]
+                        meaningfulnesspscore = result["processed_body"]["meaningfulnesspscore"]
+                        ageofacquisitionscore = result["processed_body"]["ageofacquisitionscore"]
+                        grammar_errorrate = result["processed_body"]["grammar_errorrate"]
+                        flesch_reading_ease = result["processed_body"]["flesch_reading_ease"]
+                        flesch_kincaid_grade_level = result["processed_body"]["flesch_kincaid_grade_level"]
+                        smog = result["processed_body"]["smog"]
+                        coleman_liau = result["processed_body"]["coleman_liau"]
+                        ari = result["processed_body"]["ari"]
+                        semanticoverlap = result["processed_body"]["semanticoverlap"]
+                        typetokenratio = 0 # json.dumps(result["processed_body"]["typetokenratio"])
+                        holistic_score = result["processed_body"]["holistic_score"]
+                        fact_status = result["processed_body"]["fact_status"]
+                        fact_count = result["processed_body"]["fact_count"]
+                        accuracy_score = result["processed_body"]["accuracy_score"]
+                        feedback_text = result["processed_body"]["feedback_text"]
+                        cursor.execute("INSERT INTO tbl_submit_document_stat (submission_id, uuid, process_status, length_by_sentence, length_by_distinct_token, length_by_word, length_by_character, lexical_diversity, data_by_sentence, data_by_fdist, wordfrequency_all, wordfrequency_content, wordfrequency_function, wordrangescore, academicwordscore, academic_sublists_score, familiarityscore, concretenessscore, imagabilityscore, meaningfulnesscscore, meaningfulnesspscore, ageofacquisitionscore, grammar_errorrate, flesch_reading_ease, flesch_kincaid_grade_level, smog, coleman_liau, ari, semanticoverlap, typetokenratio, holistic_score, fact_status, fact_count, accuracy_score, feedback_text) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", (
                             submission_id,
                             uuid,
                             process_status,
@@ -281,6 +294,10 @@ def process_analysis(id, uuid, submission_id=""):
                             semanticoverlap,
                             typetokenratio,
                             holistic_score,
+                            fact_status,
+                            fact_count,
+                            accuracy_score,
+                            feedback_text
                         ))
                         conn.commit()
                         success = True
@@ -378,7 +395,7 @@ def get_doc():
         else:
             #body = result[0]
             cursor = conn.cursor()
-            cursor.execute("SELECT process_status, submission_id, length_by_sentence, length_by_distinct_token, length_by_word, length_by_character, lexical_diversity, data_by_sentence, data_by_fdist, wordfrequency_all, wordfrequency_content, wordfrequency_function, wordrangescore, academicwordscore, academic_sublists_score, familiarityscore, concretenessscore, imagabilityscore, meaningfulnesscscore, meaningfulnesspscore, ageofacquisitionscore, grammar_errorrate, flesch_reading_ease, flesch_kincaid_grade_level, smog, coleman_liau, ari, semanticoverlap, typetokenratio, holistic_score FROM tbl_submit_document_stat WHERE submission_id = %s OR uuid = %s;", (id, uuid))
+            cursor.execute("SELECT process_status, submission_id, length_by_sentence, length_by_distinct_token, length_by_word, length_by_character, lexical_diversity, data_by_sentence, data_by_fdist, wordfrequency_all, wordfrequency_content, wordfrequency_function, wordrangescore, academicwordscore, academic_sublists_score, familiarityscore, concretenessscore, imagabilityscore, meaningfulnesscscore, meaningfulnesspscore, ageofacquisitionscore, grammar_errorrate, flesch_reading_ease, flesch_kincaid_grade_level, smog, coleman_liau, ari, semanticoverlap, typetokenratio, holistic_score, fact_status, fact_count, accuracy_score, feedback_text FROM tbl_submit_document_stat WHERE submission_id = %s OR uuid = %s;", (id, uuid))
             result2 = cursor.fetchall()
 
             dict_result = [
@@ -413,6 +430,10 @@ def get_doc():
                     "semanticoverlap": row[27],
                     "typetokenratio": row[28],
                     "holistic_score": row[29],
+                    "fact_status": row[30],
+                    "fact_count":row[31],
+                    "accuracy_score":row[32],
+                    "feedback_text":row[33]
                 }
                 for row in result2
             ]
@@ -489,6 +510,8 @@ def new_file():
     if request.method == 'POST':
         submission_id = request.form.get('submission_id')
         user_id = request.form.get('user_id')
+        prompt = request.form.get('prompt')
+        facts = request.form.get('facts')
 
         if 'file' not in request.files:
             print('No file attached in request')
@@ -507,7 +530,7 @@ def new_file():
             # Prepare to Queue Conversion
             processedContent = inputContent
             hashId = genHash(processedContent)
-            return queue_convert_doc(res, processedContent, submission_id, hashId, user_id)
+            return queue_convert_doc(res, processedContent, submission_id, hashId, user_id, prompt, facts)
 
         # Trying File:
         file0 = request.files['file']
@@ -539,7 +562,7 @@ def new_file():
             now = datetime.now()
             timestamp = datetime.timestamp(now)
             hashId = genHash(f'{filename}_{timestamp}')
-            return queue_convert_doc(res, "", submission_id, hashId, user_id, filename=filename, filepath=filepath)
+            return queue_convert_doc(res, "", submission_id, hashId, user_id, filename=filename, filepath=filepath, prompt = prompt, facts = facts)
 
     # Not a POST request
     return make_response(jsonify({
