@@ -27,7 +27,7 @@ ENV CUDA_HOME=/usr/local/cuda
 
 WORKDIR /
 RUN curl -o /abc.deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-compat-10-2_440.64.00-1_amd64.deb
-RUN apt install /abc.deb
+RUN apt -y --allow-downgrades install /abc.deb
 
 COPY cudatoolkit.deb /
 RUN dpkg -i /cudatoolkit.deb
