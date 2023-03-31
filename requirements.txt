@@ -2,7 +2,7 @@ Flask==1.0.3
 flask-mysql
 pymongo==3.8.0
 mongoengine==0.18.2
-redis==3.2.1
+redis==4.4.4
 rq-dashboard==0.5.1
 rq==1.1.0
 supervisor==4.0.3
