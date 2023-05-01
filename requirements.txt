@@ -1,4 +1,4 @@
-Flask==1.0.3
+Flask==2.3.2
 flask-mysql
 pymongo==3.8.0
 mongoengine==0.18.2
